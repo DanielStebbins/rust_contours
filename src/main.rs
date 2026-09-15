@@ -2,7 +2,7 @@ use std::env;
 
 struct Walk {
     steps: u64,
-    length: u32,
+    length: u8,
 }
 
 impl Walk {
