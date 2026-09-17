@@ -51,6 +51,7 @@ impl Walk {
         if self.length < 12 {
             return false;
         }
+        println!("{}", self.to_binary());
         let mut steps = self.steps;
         let limit = self.length;
         let mut x = 0;
@@ -80,7 +81,7 @@ impl Walk {
     }
 
     pub fn to_binary(self: &Self) -> String {
-        format!("{:b}", self.steps)
+        format!("{:0width$b}", self.steps, width = self.length as usize)
     }
 }
 
@@ -93,22 +94,26 @@ fn brute_force(length: u8) -> u64 {
     let mut count: u64 = 0;
     while !walks.is_empty() {
         let current = walks.pop().expect("Should not be empty");
-        let horizontal = current.step_horizontal();
-        let (hx, hy) = horizontal.get_endpoint();
-        if !horizontal.has_loop(hx, hy) {
-            if horizontal.length < length {
-                walks.push(horizontal);
-            } else {
-                count += 1;
+        if current.length < 2 || current.approach() != 0b10 {
+            let horizontal = current.step_horizontal();
+            let (hx, hy) = horizontal.get_endpoint();
+            if !horizontal.has_loop(hx, hy) {
+                if horizontal.length < length {
+                    walks.push(horizontal);
+                } else {
+                    count += 1;
+                }
             }
         }
-        let vertical = current.step_vertical();
-        let (vx, vy) = vertical.get_endpoint();
-        if !vertical.has_loop(vx, vy) {
-            if vertical.length < length {
-                walks.push(vertical);
-            } else {
-                count += 1;
+        if current.length < 2 || current.approach() != 0b01 {
+            let vertical = current.step_vertical();
+            let (vx, vy) = vertical.get_endpoint();
+            if !vertical.has_loop(vx, vy) {
+                if vertical.length < length {
+                    walks.push(vertical);
+                } else {
+                    count += 1;
+                }
             }
         }
     }
